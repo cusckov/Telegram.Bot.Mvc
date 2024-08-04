@@ -1,0 +1,6 @@
+@Telegram.Bot.Mvc.Example_HostAddress = http://localhost:5109
+
+GET {{Telegram.Bot.Mvc.Example_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
