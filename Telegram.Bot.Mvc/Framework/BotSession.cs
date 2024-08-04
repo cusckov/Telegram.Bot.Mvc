@@ -4,13 +4,13 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using Telegram.Bot.Mvc.Core;
+using Telegram.Bot.Mvc.Core.Interfaces;
 using Telegram.Bot.Types;
 
 namespace Telegram.Bot.Mvc.Framework
 {
-    public class BotSession {
-
+    public class BotSession
+    {
         public string Username => BotInfo.Username;
         public User BotInfo { get; protected set; }
 
@@ -22,7 +22,8 @@ namespace Telegram.Bot.Mvc.Framework
 
         public IDictionary<long, ChatSession> ChatSessions { get; protected set; } = new Dictionary<long, ChatSession>();
 
-        public BotSession(ITelegramBotClient client, IBotRouter router, ILogger logger, string token) {
+        public BotSession(ITelegramBotClient client, IBotRouter router, ILogger logger, string token)
+        {
             Bot = client;
             Logger = logger;
             Router = router;
@@ -35,7 +36,7 @@ namespace Telegram.Bot.Mvc.Framework
         {
             using (var stream = new System.IO.FileStream(certificatePath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
             {
-                await Bot.SetWebhookAsync(webHookPath, new FileToSend("cer.pem", stream));
+                await Bot.SetWebhookAsync(webHookPath, new InputFileStream(stream, "cer.pem"));
             }
         }
 

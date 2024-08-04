@@ -5,17 +5,24 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Mvc.Core;
+using Telegram.Bot.Mvc.Core.Interfaces;
 
 namespace Telegram.Bot.Mvc.Framework
 {
     public class BotRouter : IBotRouter
     {
-        public Task Route(BotContext context, IBotControllerFactory factory)
+        private readonly IBotControllerFactory _factory;
+
+        public BotRouter(IBotControllerFactory factory)
+        {
+            _factory = factory;
+        }
+        public Task Route(BotContext context)
         {
             // Data Parsing ...
             string body = context.Update.Message?.Text;
-            if (context.Update.Type == UpdateType.CallbackQueryUpdate) body = context.Update.CallbackQuery?.Data;
-            if (context.Update.Type == UpdateType.InlineQueryUpdate) body = context.Update.InlineQuery?.Query;
+            if (context.Update.Type == UpdateType.CallbackQuery) body = context.Update.CallbackQuery?.Data;
+            if (context.Update.Type == UpdateType.InlineQuery) body = context.Update.InlineQuery?.Query;
 
             if (string.IsNullOrEmpty(body)) body = "";
             string[] pathFragments;
@@ -36,7 +43,7 @@ namespace Telegram.Bot.Mvc.Framework
             string command = pathFragments[0].ToLowerInvariant();
 
             // Controller & Method Resolution...
-            var resolutionResult = factory.GetControllers()
+            var resolutionResult = _factory.GetControllers()
                 .Select(x => new
                 {
                     ControllerType = x,
@@ -52,7 +59,7 @@ namespace Telegram.Bot.Mvc.Framework
             var optimizedParameters = OptimizedParameters(methodParametersCount, body, parameters);
 
             // Controller Init ...
-            using (var controller = factory.Create(resolutionResult.ControllerType, context))
+            using (var controller = _factory.Create(resolutionResult.ControllerType, context))
             {
                 context.RouteData = new BotRouteData(
                                   controller.GetType().Name,

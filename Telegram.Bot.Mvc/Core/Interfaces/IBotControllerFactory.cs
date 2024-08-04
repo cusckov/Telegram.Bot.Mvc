@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Telegram.Bot.Mvc.Framework;
 
-namespace Telegram.Bot.Mvc.Core
+namespace Telegram.Bot.Mvc.Core.Interfaces
 {
     public interface IBotControllerFactory
     {

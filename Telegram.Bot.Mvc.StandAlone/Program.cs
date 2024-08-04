@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Telegram.Bot.Mvc.Framework;
 using System.Configuration;
 using Telegram.Bot.Mvc.Extensions;
-using Telegram.Bot.Mvc.Core;
+using Telegram.Bot.Mvc.Core.Interfaces;
 
 namespace Telegram.Bot.Mvc.StandAlone
 {

@@ -1,34 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using Telegram.Bot.Mvc.Core;
-using Telegram.Bot.Mvc.Scheduler;
+using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Telegram.Bot.Mvc.Core.Interfaces;
+using Telegram.Bot.Mvc.Scheduler.Interfaces;
 
 namespace Telegram.Bot.Mvc.Framework
 {
     public class BotControllerFactory : IBotControllerFactory
     {
-        private IScheduler _scheduler;
-        private readonly IEnumerable<Type> allControllers;
+        private readonly IScheduler _scheduler;
+        private readonly IServiceProvider _serviceProvider;
 
-        public BotControllerFactory(IScheduler scheduler, IEnumerable<Type> allControllers)
+        public BotControllerFactory(IScheduler scheduler, 
+            IServiceProvider serviceProvider)
         {
             _scheduler = scheduler;
-            this.allControllers = allControllers;
+
+            _serviceProvider = serviceProvider;
         }
         public BotController Create<TController>(BotContext context) where TController : BotController, new()
         {
-            return new TController()
-            {
-                Context = context,
-                Scheduler = _scheduler
-            };
+            var controller = _serviceProvider.GetService<TController>();
+
+            if (controller == null) 
+                throw new Exception("Could Not Resolve Controller From Type!");
+
+            controller.Context = context;
+            controller.Scheduler = _scheduler;
+            return controller;
         }
 
         public BotController Create(Type type, BotContext context)
         {
-            if (type == null) throw new Exception("Controller Type Not Found!");
-            var controller = Activator.CreateInstance(type) as BotController;
-            if (controller == null) throw new Exception("Could Not Create Controller From Type!");
+            if (type == null) 
+                throw new Exception("Controller Type Not Found!");
+
+            var controller = _serviceProvider.GetService(type) as BotController;
+            if (controller == null) 
+                throw new Exception("Could Not Create Controller From Type!");
+
             controller.Context = context;
             controller.Scheduler = _scheduler;
             return controller;
@@ -36,7 +47,9 @@ namespace Telegram.Bot.Mvc.Framework
 
         public IEnumerable<Type> GetControllers()
         {
-            return allControllers;
+            return _serviceProvider
+                .GetServices<BotController>()
+                .Select(c => c.GetType());
         }
     }
 }

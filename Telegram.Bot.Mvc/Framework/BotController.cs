@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Mvc.Core;
-using Telegram.Bot.Mvc.Scheduler;
 using System;
+using Telegram.Bot.Mvc.Core.Interfaces;
+using Telegram.Bot.Mvc.Scheduler.Interfaces;
 
 namespace Telegram.Bot.Mvc.Framework
 {

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Bot.Mvc.Core;
+using Telegram.Bot.Mvc.Core.Interfaces;
+using Telegram.Bot.Mvc.Scheduler.Interfaces;
 
 namespace Telegram.Bot.Mvc.Scheduler
 {
@@ -19,11 +21,11 @@ namespace Telegram.Bot.Mvc.Scheduler
         private Semaphore _semaphore;
         private ManualResetEvent _waitHandler = new ManualResetEvent(false);
 
-        public PerSecondScheduler(ILogger logger, int tasksCount = 30, int inSeconds = 1)
+        public PerSecondScheduler(ILogger logger, IOptions<SchedulerOptions> options)
         {
             _logger = logger;
-            _tasksCount = tasksCount;
-            _inSeconds = inSeconds;
+            _tasksCount = options.Value.TasksCount;
+            _inSeconds = options.Value.InSeconds;
             _innerDelay = ((1000 * _inSeconds) / _tasksCount) + 1;
             _queue = new MultiLevelPriorityQueue<Task>();
             _semaphore = new Semaphore(_tasksCount, _tasksCount);

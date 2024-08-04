@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Telegram.Bot.Mvc.Scheduler
+namespace Telegram.Bot.Mvc.Scheduler.Interfaces
 {
     /// <summary>
     /// Used to throttle tasks according to thier priority and the current load.

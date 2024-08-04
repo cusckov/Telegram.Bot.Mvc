@@ -32,10 +32,10 @@ namespace Telegram.Bot.Mvc.Framework
                 {
                     switch (Update.Type)
                     {
-                        case Types.Enums.UpdateType.MessageUpdate:
+                        case Types.Enums.UpdateType.Message:
                             _chat = Update.Message.Chat;
                             break;
-                        case Types.Enums.UpdateType.CallbackQueryUpdate:
+                        case Types.Enums.UpdateType.CallbackQuery:
                             _chat = Update.CallbackQuery.Message.Chat;
                             break;
                         case Types.Enums.UpdateType.EditedMessage:
@@ -64,10 +64,10 @@ namespace Telegram.Bot.Mvc.Framework
                 {
                     switch (Update.Type)
                     {
-                        case Types.Enums.UpdateType.MessageUpdate:
+                        case Types.Enums.UpdateType.Message:
                             _user = Update.Message.From;
                             break;
-                        case Types.Enums.UpdateType.CallbackQueryUpdate:
+                        case Types.Enums.UpdateType.CallbackQuery:
                             _user = Update.CallbackQuery.From;
                             break;
                         case Types.Enums.UpdateType.EditedMessage:
@@ -79,16 +79,16 @@ namespace Telegram.Bot.Mvc.Framework
                         case Types.Enums.UpdateType.EditedChannelPost:
                             _user = Update.EditedChannelPost.From;
                             break;
-                        case Types.Enums.UpdateType.InlineQueryUpdate:
+                        case Types.Enums.UpdateType.InlineQuery:
                             _user = Update.InlineQuery.From;
                             break;
-                        case Types.Enums.UpdateType.ChosenInlineResultUpdate:
+                        case Types.Enums.UpdateType.ChosenInlineResult:
                             _user = Update.ChosenInlineResult.From;
                             break;
-                        case Types.Enums.UpdateType.PreCheckoutQueryUpdate:
+                        case Types.Enums.UpdateType.PreCheckoutQuery:
                             _user = Update.PreCheckoutQuery.From;
                             break;
-                        case Types.Enums.UpdateType.ShippingQueryUpdate:
+                        case Types.Enums.UpdateType.ShippingQuery:
                             _user = Update.ShippingQuery.From;
                             break;
                         default:

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Telegram.Bot.Mvc.Core;
+using Telegram.Bot.Mvc.Core.Interfaces;
 using Telegram.Bot.Mvc.Framework;
 using Telegram.Bot.Mvc.WebHook.Configurations;
 using Telegram.Bot.Types;

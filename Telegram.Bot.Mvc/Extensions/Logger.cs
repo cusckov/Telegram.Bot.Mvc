@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Telegram.Bot.Mvc.Core;
+using Telegram.Bot.Mvc.Core.Interfaces;
 using Telegram.Bot.Mvc.Framework;
 
 namespace Telegram.Bot.Mvc.Extensions
