@@ -7,7 +7,7 @@ using Telegram.Bot.Mvc.Core;
 
 namespace Telegram.Bot.Mvc.Scheduler
 {
-    public class PerSecondScheduler : ISchedualer
+    public class PerSecondScheduler : IScheduler
     {
         private ILogger _logger;
         private int _tasksCount;

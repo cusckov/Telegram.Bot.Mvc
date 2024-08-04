@@ -11,7 +11,7 @@ namespace Telegram.Bot.Mvc.Framework {
 
 
         public BotContext Context { get; set; }
-        public ISchedualer Scheduler { get;  set; }
+        public IScheduler Scheduler { get;  set; }
 
         private ChatSession _chatSession;
         public ChatSession ChatSession

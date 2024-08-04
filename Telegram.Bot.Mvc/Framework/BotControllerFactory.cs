@@ -6,10 +6,10 @@ using Telegram.Bot.Mvc.Scheduler;
 namespace Telegram.Bot.Mvc.Framework {
     public class BotControllerFactory : IBotControllerFactory
     {
-        private ISchedualer _scheduler;
+        private IScheduler _scheduler;
         private readonly IEnumerable<Type> allControllers;
 
-        public BotControllerFactory(ISchedualer scheduler, IEnumerable<Type> allControllers)
+        public BotControllerFactory(IScheduler scheduler, IEnumerable<Type> allControllers)
         {
             _scheduler = scheduler;
             this.allControllers = allControllers;

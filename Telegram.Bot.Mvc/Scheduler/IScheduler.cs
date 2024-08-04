@@ -9,7 +9,7 @@ namespace Telegram.Bot.Mvc.Scheduler
     /// Used to throttle tasks according to thier priority and the current load.
     /// </summary>
     /// <remarks>Usefull to throttle requests to telegram servers, and avoid being banned for too many requests. </remarks>
-    public interface ISchedualer : IDisposable
+    public interface IScheduler : IDisposable
     {
 
         /// <summary>
