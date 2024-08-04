@@ -6,12 +6,12 @@ using Telegram.Bot.Mvc.Core;
 using Telegram.Bot.Mvc.Scheduler;
 using System;
 
-namespace Telegram.Bot.Mvc.Framework {
-    public abstract class BotController : IDisposable {
-
-
+namespace Telegram.Bot.Mvc.Framework
+{
+    public abstract class BotController : IDisposable
+    {
         public BotContext Context { get; set; }
-        public IScheduler Scheduler { get;  set; }
+        public IScheduler Scheduler { get; set; }
 
         private ChatSession _chatSession;
         public ChatSession ChatSession

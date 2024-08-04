@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Telegram.Bot.Mvc.Core;
 using Telegram.Bot.Mvc.Scheduler;
 
-namespace Telegram.Bot.Mvc.Framework {
+namespace Telegram.Bot.Mvc.Framework
+{
     public class BotControllerFactory : IBotControllerFactory
     {
         private IScheduler _scheduler;
@@ -14,14 +15,17 @@ namespace Telegram.Bot.Mvc.Framework {
             _scheduler = scheduler;
             this.allControllers = allControllers;
         }
-        public BotController Create<TController>(BotContext context) where TController : BotController, new() {
-            return new TController() {
+        public BotController Create<TController>(BotContext context) where TController : BotController, new()
+        {
+            return new TController()
+            {
                 Context = context,
                 Scheduler = _scheduler
             };
         }
 
-        public BotController Create(Type type, BotContext context) {
+        public BotController Create(Type type, BotContext context)
+        {
             if (type == null) throw new Exception("Controller Type Not Found!");
             var controller = Activator.CreateInstance(type) as BotController;
             if (controller == null) throw new Exception("Could Not Create Controller From Type!");

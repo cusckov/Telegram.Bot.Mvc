@@ -39,8 +39,7 @@ namespace Telegram.Bot.Mvc.WebHook
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            // TODO: Add Logger
 
             // Setup End-point for all bots.
             app.UseMvc((config)=> {

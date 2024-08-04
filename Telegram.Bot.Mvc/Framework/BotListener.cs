@@ -10,7 +10,8 @@ using Telegram.Bot.Mvc.Scheduler;
 
 namespace Telegram.Bot.Mvc.Framework
 {
-    public class BotListener  : IDisposable{
+    public class BotListener : IDisposable
+    {
 
         private readonly ILogger _logger;
         private readonly Func<IBotControllerFactory> _factoryCreator;
@@ -22,7 +23,8 @@ namespace Telegram.Bot.Mvc.Framework
         public string Token { get; protected set; }
 
 
-        public BotListener(string token, ILogger logger, IBotRouter router, Func<IBotControllerFactory> factoryCreator) {
+        public BotListener(string token, ILogger logger, IBotRouter router, Func<IBotControllerFactory> factoryCreator)
+        {
             _logger = logger;
             _router = router;
             _factoryCreator = factoryCreator;
@@ -35,32 +37,39 @@ namespace Telegram.Bot.Mvc.Framework
             Bot.OnUpdate += _bot_OnUpdate;
         }
 
-        private async void _bot_OnUpdate(object sender, Bot.Args.UpdateEventArgs e) {
+        private async void _bot_OnUpdate(object sender, Bot.Args.UpdateEventArgs e)
+        {
             var context = new BotContext(null, _session, e.Update);
-            try {
+            try
+            {
                 await _router.Route(context, _factoryCreator.Invoke());
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.Log(ex, context.RouteData);
             }
         }
 
-        private void Bot_OnReceiveGeneralError(object sender, Args.ReceiveGeneralErrorEventArgs e) {
+        private void Bot_OnReceiveGeneralError(object sender, Args.ReceiveGeneralErrorEventArgs e)
+        {
             _logger.Log(e.Exception);
         }
 
-        private void Bot_OnReceiveError(object sender, Args.ReceiveErrorEventArgs e) {
+        private void Bot_OnReceiveError(object sender, Args.ReceiveErrorEventArgs e)
+        {
             _logger.Log(e.ApiRequestException);
         }
 
-        public BotSession Start(params UpdateType[] updateTypes)   {
+        public BotSession Start(params UpdateType[] updateTypes)
+        {
             if (_session == null) _session = new BotSession(Bot, _router, _logger, Token);
             Bot.SetWebhookAsync().Wait();
             Bot.StartReceiving(updateTypes);
             return _session;
         }
 
-        public void Stop() {
+        public void Stop()
+        {
             Bot.StopReceiving();
         }
 

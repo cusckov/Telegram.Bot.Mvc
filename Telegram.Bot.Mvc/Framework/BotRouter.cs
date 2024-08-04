@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Mvc.Core;
 
-namespace Telegram.Bot.Mvc.Framework {
+namespace Telegram.Bot.Mvc.Framework
+{
     public class BotRouter : IBotRouter
-    { 
-
-
-        public Task Route(BotContext context, IBotControllerFactory factory) {
+    {
+        public Task Route(BotContext context, IBotControllerFactory factory)
+        {
             // Data Parsing ...
             string body = context.Update.Message?.Text;
             if (context.Update.Type == UpdateType.CallbackQueryUpdate) body = context.Update.CallbackQuery?.Data;
@@ -20,12 +20,14 @@ namespace Telegram.Bot.Mvc.Framework {
             if (string.IsNullOrEmpty(body)) body = "";
             string[] pathFragments;
             object[] parameters;
-            if (body.StartsWith("/")) {
+            if (body.StartsWith("/"))
+            {
                 pathFragments = body.Split(' ');
                 parameters = new object[pathFragments.Length - 1];
                 Array.Copy(pathFragments, 1, parameters, 0, parameters.Length);
             }
-            else {
+            else
+            {
                 pathFragments = new string[] { body };
                 parameters = null;
             }
@@ -35,11 +37,12 @@ namespace Telegram.Bot.Mvc.Framework {
 
             // Controller & Method Resolution...
             var resolutionResult = factory.GetControllers()
-                .Select(x => new {
+                .Select(x => new
+                {
                     ControllerType = x,
                     Method = GetMethod(context, x, command, parametersCount)
                 })
-                .OrderBy(x=> x.Method.GetCustomAttributes(typeof(AnyPathAttribute), false).Count())
+                .OrderBy(x => x.Method.GetCustomAttributes(typeof(AnyPathAttribute), false).Count())
                 .FirstOrDefault(x => x.Method != null);
             if (resolutionResult == null)
                 throw new Exception("Can't Find Method For Path: " + command + ", " + context.Update.Type.ToString());
@@ -77,16 +80,18 @@ namespace Telegram.Bot.Mvc.Framework {
             return optimizedParameters;
         }
 
-        protected MethodInfo GetMethod(BotContext context, Type controllerType, string path, int paramaetersCount) {
+        protected MethodInfo GetMethod(BotContext context, Type controllerType, string path, int paramaetersCount)
+        {
             var candidates = controllerType.GetTypeInfo().GetMethods()
                    .Where(x =>
                         x.GetCustomAttributes(typeof(BotPathAttribute), false).Any(z =>
                            (z as BotPathAttribute).Path.ToLowerInvariant() == path &&
                            (z as BotPathAttribute).UpdateType == context.Update.Type)
-                    ).OrderByDescending(x=> x.GetParameters().Length);
+                    ).OrderByDescending(x => x.GetParameters().Length);
 
             var method = candidates.FirstOrDefault(x => x.GetParameters().Length <= paramaetersCount);
-            if (method == null) {
+            if (method == null)
+            {
                 method = controllerType.GetTypeInfo().GetMethods()
                    .FirstOrDefault(x => x.GetCustomAttributes(typeof(AnyPathAttribute), false).Any(z =>
                         (z as AnyPathAttribute).UpdateType == context.Update.Type));

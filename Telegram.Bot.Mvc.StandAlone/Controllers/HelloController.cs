@@ -41,5 +41,10 @@ namespace Telegram.Bot.Mvc.StandAlone.Controllers
             Scheduler.Enqueue(delay: 1000, priority: 0, actions: actions.ToArray());
             return Task.FromResult(0);
         }
+
+        public override void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
