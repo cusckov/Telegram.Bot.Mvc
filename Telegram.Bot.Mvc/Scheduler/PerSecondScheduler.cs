@@ -113,14 +113,16 @@ namespace Telegram.Bot.Mvc.Scheduler
                         _semaphore.Release();
                         await localTask;
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         _logger.Log(ex);
                     }
                 });
 
-                lock (handlers) {
+                lock (handlers)
+                {
                     handlers.Add(task);
-                    if(handlers.Count % 100 == 0) handlers.RemoveAll(x => x.IsCompleted);
+                    if (handlers.Count % 100 == 0) handlers.RemoveAll(x => x.IsCompleted);
                 }
                 await Task.Delay(_innerDelay);
             }
@@ -193,14 +195,15 @@ namespace Telegram.Bot.Mvc.Scheduler
                 int currentSlot = Volatile.Read(ref _currantQueueSlots[_currentQueue]);
                 if (currentSlot > 0)
                     lock (_queue[_currentQueue])
-                        if (_queue[_currentQueue].Count > 0) {
+                        if (_queue[_currentQueue].Count > 0)
+                        {
                             var newValue = Interlocked.Decrement(ref _currantQueueSlots[_currentQueue]);
                             return _queue[_currentQueue];
                         }
                 Volatile.Write(ref _currantQueueSlots[_currentQueue], QUEUE_SLOTS[_currentQueue]);
                 _currentQueue = (_currentQueue + 1) % PRIORITY_MAX;
                 tries++;
-                if(tries >= PRIORITY_MAX * 2) return null;
+                if (tries >= PRIORITY_MAX * 2) return null;
             }
         }
 

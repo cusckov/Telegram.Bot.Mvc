@@ -11,13 +11,15 @@ namespace Telegram.Bot.Mvc.Framework
     {
         private readonly IScheduler _scheduler;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IEnumerable<Type> _allControllers;
 
         public BotControllerFactory(IScheduler scheduler, 
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IEnumerable<Type> allControllers)
         {
             _scheduler = scheduler;
-
             _serviceProvider = serviceProvider;
+            _allControllers = allControllers;
         }
         public BotController Create<TController>(BotContext context) where TController : BotController, new()
         {
@@ -47,9 +49,7 @@ namespace Telegram.Bot.Mvc.Framework
 
         public IEnumerable<Type> GetControllers()
         {
-            return _serviceProvider
-                .GetServices<BotController>()
-                .Select(c => c.GetType());
+            return _allControllers;
         }
     }
 }

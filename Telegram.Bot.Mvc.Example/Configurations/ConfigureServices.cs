@@ -1,8 +1,11 @@
-﻿using Telegram.Bot.Mvc.Core.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
+using Telegram.Bot.Mvc.Core.Interfaces;
 using Telegram.Bot.Mvc.Example.BotControllers;
 using Telegram.Bot.Mvc.Extensions;
 using Telegram.Bot.Mvc.Framework;
 using Telegram.Bot.Mvc.Scheduler;
+using Telegram.Bot.Mvc.Scheduler.Interfaces;
 using Telegram.Bot.Mvc.Services;
 using Telegram.Bot.Mvc.Services.Settings;
 using ILogger = Telegram.Bot.Mvc.Core.Interfaces.ILogger;
@@ -14,20 +17,30 @@ namespace Telegram.Bot.Mvc.Example.Configurations
         public static IServiceCollection AddBotMvc(this IServiceCollection services)
         {
             services.Scan(scan => scan
-                .FromAssemblyOf<StartController>()
+                .FromCallingAssembly()
                 .AddClasses(classes => classes.AssignableTo<BotController>())
                 .AsSelf()
                 .WithTransientLifetime());
 
+            // TODO: Добавить логгер
+            // TODO: Refactoring
+
+            services.AddSingleton(sp => // TODO: переделать под интерфейс
+            {
+                var assembly = typeof(StartController).Assembly;
+
+                return assembly.GetTypes().Where(c => c.BaseType == typeof(BotController));
+            });
+
             services.AddSingleton<ILogger, Logger>();
-            services.AddSingleton<BotRouter>();
 
             services.Configure<SchedulerOptions>(options =>
             {
                 options.InSeconds = 1;
                 options.TasksCount = 30;
             });
-            services.AddSingleton<PerSecondScheduler>();
+            services.AddSingleton<IScheduler, PerSecondScheduler>();
+
 
             services.Configure<LocalTokens>(options =>
             {
@@ -44,6 +57,8 @@ namespace Telegram.Bot.Mvc.Example.Configurations
             services.AddSingleton<BotSessionService>();
 
             services.AddSingleton<IBotControllerFactory, BotControllerFactory>();
+
+            services.AddSingleton<BotRouter>();
 
             return services;
         }

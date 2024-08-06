@@ -1,4 +1,5 @@
 using Serilog;
+using Telegram.Bot.Mvc.Example.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddBotMvc();
 
 var app = builder.Build();
 

@@ -1,51 +1,47 @@
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Mvc.Framework;
+using Telegram.Bot.Mvc.Services;
 using Telegram.Bot.Types;
 
 namespace Telegram.Bot.Mvc.Example.Controllers
 {
     [ApiController]
-    [Route("/")]
+    [Route("api/[controller]")]
     public class WebhooksController : Controller
     {
         private readonly Dictionary<string, BotSession> _sessions;
 
-        public WebhooksController()
+        public WebhooksController(BotSessionService sessionService)
         {
-            //_sessions = sessionService.GetBotSessions();
+            _sessions = sessionService.GetBotSessions();
         }
 
-        [HttpPost]
-        public void Post(Update update) //—юда будут приходить апдейты
+        [HttpPost("{botUsername}")]
+        public async Task<IActionResult> Post(
+            [FromRoute] string botUsername,
+            [FromBody] Update update)
         {
-            Console.WriteLine(update.Message.Text);
+
+            try
+            {
+                if (update == null)
+                    throw new ArgumentException("update is null!");
+
+                _sessions.TryGetValue(botUsername, out BotSession session);
+
+                if (session == null)
+                    throw new ArgumentException("session is null, bot token is not registered!");
+
+                BotContext context = new BotContext(null, session, update);
+
+                await session.Router.Route(context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return Ok(); 
         }
-
-        // POST api/Webhooks/[botUsername]
-        //[HttpPost]
-        //public async Task<IActionResult> Post(
-        //    [FromBody] Update update)
-        //{
-        //    try
-        //    {
-        //        if (update == null)
-        //            throw new ArgumentException("update is null!");
-
-        //        //_sessions.TryGetValue(botUsername, out BotSession session);
-
-        //        //if (session is null)
-        //        //    throw new ArgumentException("session is null, bot token is not registered!");
-
-        //        //var context = new BotContext(null, session, update);
-
-        //        //await session.Router.Route(context);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //logger.LogError(ex, $"Error during {nameof(WebhooksController)} working:"); // context?.RouteData
-        //    }
-
-        //    return Ok(); // Suppress Errors ...
-        //}
     }
 }

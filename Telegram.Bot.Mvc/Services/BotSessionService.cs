@@ -38,6 +38,8 @@ namespace Telegram.Bot.Mvc.Services
         }
         public Dictionary<string, BotSession> GetBotSessions()
         {
+            _sessions = new Dictionary<string, BotSession>();
+
             var tokens = _tokenStorage.GetTokens();
 
             foreach (var token in tokens)

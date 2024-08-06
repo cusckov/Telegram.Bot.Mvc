@@ -14,6 +14,8 @@ namespace Telegram.Bot.Mvc.Framework
         public IScheduler Scheduler { get; set; }
 
         private ChatSession _chatSession;
+        private bool _disposed;
+
         public ChatSession ChatSession
         {
             get
@@ -43,6 +45,26 @@ namespace Telegram.Bot.Mvc.Framework
         public ILogger Logger => Context.BotSession.Logger;
         public ITelegramBotClient Bot => Context.Bot;
 
-        public abstract void Dispose();
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects).
+            }
+
+            _disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
     }
 }
