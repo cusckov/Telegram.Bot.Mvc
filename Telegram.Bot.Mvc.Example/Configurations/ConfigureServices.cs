@@ -25,12 +25,7 @@ namespace Telegram.Bot.Mvc.Example.Configurations
             // TODO: Добавить логгер
             // TODO: Refactoring
 
-            services.AddSingleton(sp => // TODO: переделать под интерфейс
-            {
-                var assembly = typeof(StartController).Assembly;
-
-                return assembly.GetTypes().Where(c => c.BaseType == typeof(BotController));
-            });
+            services.AddSingleton<IBotControllerProvider, BotControllerProvider>(_ => new BotControllerProvider(typeof(StartController).Assembly));
 
             services.AddSingleton<ILogger, Logger>();
 
