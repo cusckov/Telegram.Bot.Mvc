@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using System;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Mvc.Core.Interfaces;
 using Telegram.Bot.Mvc.Scheduler.Interfaces;
 

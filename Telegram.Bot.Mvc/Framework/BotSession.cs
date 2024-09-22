@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Mvc.Core.Interfaces;
 using Telegram.Bot.Types;
@@ -28,8 +29,8 @@ namespace Telegram.Bot.Mvc.Framework
             Logger = logger;
             Router = router;
             Token = token;
-            Clear();
             BotInfo = client.GetMeAsync().Result;
+            Clear();
         }
 
         public async Task RegisterCertificate(string certificatePath, string webHookPath)

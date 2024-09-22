@@ -7,14 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
-//Log.Logger = new LoggerConfiguration()
-//    .ReadFrom.Configuration(configuration)
-//    .Enrich.FromLogContext()
-//    .CreateLogger();
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
-//builder.Logging
-//    .ClearProviders()
-//    .AddSerilog(Log.Logger);
+builder.Logging
+    .ClearProviders()
+    .AddSerilog(Log.Logger);
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson();

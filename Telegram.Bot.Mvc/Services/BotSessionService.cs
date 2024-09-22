@@ -1,11 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Mvc.Core.Interfaces;
-using Telegram.Bot.Mvc.Extensions;
 using Telegram.Bot.Mvc.Framework;
 using Telegram.Bot.Mvc.Services.Settings;
 
@@ -14,7 +11,7 @@ namespace Telegram.Bot.Mvc.Services
     public class BotSessionService
     {
         private readonly BotRouter _router;
-        private readonly ILogger _logger;
+        private readonly ILogger<BotSessionService> _logger;
         private readonly ITokenStorage _tokenStorage;
         private Dictionary<string, BotSession> _sessions;
         private readonly string _certificateFilePath;
@@ -23,7 +20,7 @@ namespace Telegram.Bot.Mvc.Services
 
         public BotSessionService(
             BotRouter router, 
-            ILogger logger, 
+            ILogger<BotSessionService> logger, 
             ITokenStorage tokenStorage,
             IOptions<BotSessionServiceSettings> options)
         {

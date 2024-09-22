@@ -19,21 +19,21 @@ namespace Telegram.Bot.Mvc.Example.BotControllers
         [BotPath("/start", UpdateType.Message)]
         public async Task Start()
         {
-            Console.WriteLine(User.Username + " Joined The Channel!");
+            Logger.LogInformation(User.Username + " Joined The Channel!");
             await Bot.SendTextMessageAsync(Chat.Id, "Welcome!");
         }
 
         [AnyPath(UpdateType.Message)]
         public async Task Echo()
         {
-            Console.WriteLine("Message: (" + Message.Text + ")\nReceived From (" + User.Username + ")");
+            Logger.LogInformation("Message: (" + Message.Text + ")\nReceived From (" + User.Username + ")");
             await Bot.SendTextMessageAsync(Chat.Id, Message.Text);
         }
 
         [BotPath("/test", UpdateType.Message)]
         public Task TestScheduler()
         {
-            Console.WriteLine(User.Username + " TestScheduler!");
+            Logger.LogInformation(User.Username + " TestScheduler!");
             var actions = new List<Action>();
             for (int i = 0; i < 5; i++)
             {

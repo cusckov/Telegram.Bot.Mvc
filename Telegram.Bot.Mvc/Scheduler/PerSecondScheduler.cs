@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Bot.Mvc.Core.Interfaces;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Mvc.Scheduler.Interfaces;
 
 namespace Telegram.Bot.Mvc.Scheduler
@@ -21,7 +21,7 @@ namespace Telegram.Bot.Mvc.Scheduler
         private Semaphore _semaphore;
         private ManualResetEvent _waitHandler = new ManualResetEvent(false);
 
-        public PerSecondScheduler(ILogger logger, IOptions<SchedulerOptions> options)
+        public PerSecondScheduler(ILogger<PerSecondScheduler> logger, IOptions<SchedulerOptions> options)
         {
             _logger = logger;
             _tasksCount = options.Value.TasksCount;
@@ -73,6 +73,7 @@ namespace Telegram.Bot.Mvc.Scheduler
                     if (i > 0) _semaphore.Release();
                     await Task.Delay(delay);
                 }
+
                 await Task.WhenAll(tasks);
             });
             Enqueue(compiledTask, priority);
@@ -90,6 +91,7 @@ namespace Telegram.Bot.Mvc.Scheduler
 
 
         private volatile bool _runThread = true;
+
         private async void Start()
         {
             var handlers = new List<Task>();
@@ -103,6 +105,7 @@ namespace Telegram.Bot.Mvc.Scheduler
                     Pause();
                     continue;
                 }
+
                 _semaphore.WaitOne();
                 var task = Task.Run(async () =>
                 {
@@ -115,7 +118,7 @@ namespace Telegram.Bot.Mvc.Scheduler
                     }
                     catch (Exception ex)
                     {
-                        _logger.Log(ex);
+                        _logger.LogWarning(ex, "Error while start Scheduler");
                     }
                 });
 
@@ -124,12 +127,15 @@ namespace Telegram.Bot.Mvc.Scheduler
                     handlers.Add(task);
                     if (handlers.Count % 100 == 0) handlers.RemoveAll(x => x.IsCompleted);
                 }
+
                 await Task.Delay(_innerDelay);
             }
+
             handlers.Clear();
         }
 
         #region IDisposable Support
+
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -146,6 +152,7 @@ namespace Telegram.Bot.Mvc.Scheduler
                         _queue.Dispose();
                     }
                 }
+
                 _thread = null;
                 _queue = null;
                 disposedValue = true;
@@ -156,6 +163,7 @@ namespace Telegram.Bot.Mvc.Scheduler
         {
             Dispose(true);
         }
+
         #endregion
     }
 
@@ -187,6 +195,7 @@ namespace Telegram.Bot.Mvc.Scheduler
 
         private int[] _currantQueueSlots = new int[PRIORITY_MAX];
         private volatile int _currentQueue = 0;
+
         private Queue<T> GetCurrentQueue()
         {
             int tries = 0;
@@ -200,6 +209,7 @@ namespace Telegram.Bot.Mvc.Scheduler
                             var newValue = Interlocked.Decrement(ref _currantQueueSlots[_currentQueue]);
                             return _queue[_currentQueue];
                         }
+
                 Volatile.Write(ref _currantQueueSlots[_currentQueue], QUEUE_SLOTS[_currentQueue]);
                 _currentQueue = (_currentQueue + 1) % PRIORITY_MAX;
                 tries++;
@@ -216,6 +226,7 @@ namespace Telegram.Bot.Mvc.Scheduler
             {
                 if (queue.Count > 0) t = queue.Dequeue();
             }
+
             return t;
         }
 
@@ -235,6 +246,7 @@ namespace Telegram.Bot.Mvc.Scheduler
         }
 
         #region IDisposable Support
+
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -247,16 +259,19 @@ namespace Telegram.Bot.Mvc.Scheduler
                     {
                         q.Clear();
                     }
+
                     _queue = null;
                 }
+
                 disposedValue = true;
             }
         }
+
         public void Dispose()
         {
             Dispose(true);
         }
-        #endregion
 
+        #endregion
     }
 }

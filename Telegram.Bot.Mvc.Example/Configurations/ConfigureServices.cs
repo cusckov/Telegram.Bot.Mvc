@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
-using Telegram.Bot.Mvc.Core.Interfaces;
+﻿using Telegram.Bot.Mvc.Core.Interfaces;
 using Telegram.Bot.Mvc.Example.BotControllers;
-using Telegram.Bot.Mvc.Extensions;
 using Telegram.Bot.Mvc.Framework;
 using Telegram.Bot.Mvc.Scheduler;
 using Telegram.Bot.Mvc.Scheduler.Interfaces;
 using Telegram.Bot.Mvc.Services;
 using Telegram.Bot.Mvc.Services.Settings;
-using ILogger = Telegram.Bot.Mvc.Core.Interfaces.ILogger;
 
 namespace Telegram.Bot.Mvc.Example.Configurations
 {
@@ -21,13 +17,11 @@ namespace Telegram.Bot.Mvc.Example.Configurations
                 .AddClasses(classes => classes.AssignableTo<BotController>())
                 .AsSelf()
                 .WithTransientLifetime());
-
-            // TODO: Добавить логгер
+            
             // TODO: Refactoring
+            // https://api.telegram.org/bot5656932562:AAHvXyvs5mLh8kDCwuDLzacBdRybPm9ARns/setWebhook?url=https://b714-45-147-121-38.ngrok-free.app/api/Webhooks/RuDengiBot
 
             services.AddSingleton<IBotControllerProvider, BotControllerProvider>(_ => new BotControllerProvider(typeof(StartController).Assembly));
-
-            services.AddSingleton<ILogger, Logger>();
 
             services.Configure<SchedulerOptions>(options =>
             {

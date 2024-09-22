@@ -8,6 +8,6 @@ namespace Telegram.Bot.Mvc.Core.Interfaces
     {
         BotController Create(Type type, BotContext context);
         BotController Create<TController>(BotContext context) where TController : BotController, new();
-        IEnumerable<Type> GetControllers();
+        IReadOnlyCollection<Type> GetControllers();
     }
 }
