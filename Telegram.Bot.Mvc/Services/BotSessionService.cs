@@ -5,6 +5,8 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Mvc.Core.Interfaces;
 using Telegram.Bot.Mvc.Framework;
+using Telegram.Bot.Mvc.Scheduler;
+using Telegram.Bot.Mvc.Scheduler.Interfaces;
 using Telegram.Bot.Mvc.Services.Settings;
 
 namespace Telegram.Bot.Mvc.Services
@@ -14,14 +16,14 @@ namespace Telegram.Bot.Mvc.Services
         private readonly BotRouter _router;
         private readonly ILogger<BotSessionService> _logger;
         private readonly ITokenStorage _tokenStorage;
-        private ConcurrentDictionary<string, BotSession> _sessions;
+        private readonly ConcurrentDictionary<string, BotSession> _sessions;
         private readonly string _certificateFilePath;
         private readonly string _publicBaseUrl;
         private readonly bool _registerCertificate;
 
         public BotSessionService(
-            BotRouter router, 
-            ILogger<BotSessionService> logger, 
+            BotRouter router,
+            ILogger<BotSessionService> logger,
             ITokenStorage tokenStorage,
             IOptions<BotSessionServiceSettings> options)
         {
@@ -33,16 +35,17 @@ namespace Telegram.Bot.Mvc.Services
             _publicBaseUrl = options.Value.PublicBaseUrl;
             _registerCertificate = options.Value.RegisterCertificate;
 
+            _sessions = new ConcurrentDictionary<string, BotSession>();
         }
+
         public ConcurrentDictionary<string, BotSession> GetBotSessions()
         {
-            _sessions = new ConcurrentDictionary<string, BotSession>();
-
             var tokens = _tokenStorage.GetTokens();
 
             foreach (var token in tokens)
             {
-                var session = new BotSession(new TelegramBotClient(token), _router, _logger, token);
+                var session = new BotSession(new TelegramBotClient(token), _router, _logger, token,
+                    new PriorityScheduler<long>(_logger));
 
                 if (_registerCertificate)
                 {

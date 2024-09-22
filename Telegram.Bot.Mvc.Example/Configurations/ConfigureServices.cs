@@ -25,16 +25,6 @@ namespace Telegram.Bot.Mvc.Example.Configurations
             services.AddSingleton<IBotControllerProvider, BotControllerProvider>(_ =>
                 new BotControllerProvider(typeof(StartController).Assembly));
 
-            services.Configure<SchedulerOptions>(options =>
-            {
-                options.InSeconds = 1;
-                options.TasksCount = 30;
-            });
-
-            services.AddSingleton(typeof(ISyncService<>), typeof(SyncService<>));
-            services.AddSingleton<IScheduler, PriorityScheduler>();
-
-
             services.Configure<LocalTokens>(options =>
             {
                 options.Tokens =

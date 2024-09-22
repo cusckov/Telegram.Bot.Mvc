@@ -8,7 +8,7 @@ using Telegram.Bot.Mvc.Scheduler.Interfaces;
 
 namespace Telegram.Bot.Mvc.Scheduler;
 
-public class SyncService<T> : ISyncService<T>
+public class SyncService<T>
 {
     private readonly ConcurrentDictionary<T, Lazy<Channel<Func<Task>>>> _channelDict = new();
 

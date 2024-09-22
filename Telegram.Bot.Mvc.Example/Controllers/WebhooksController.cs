@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Mvc.Framework;
+using Telegram.Bot.Mvc.Scheduler.Interfaces;
 using Telegram.Bot.Mvc.Services;
 using Telegram.Bot.Types;
 
@@ -26,7 +27,6 @@ namespace Telegram.Bot.Mvc.Example.Controllers
             [FromRoute] string botUsername,
             [FromBody] Update update)
         {
-
             try
             {
                 ArgumentNullException.ThrowIfNull(update);

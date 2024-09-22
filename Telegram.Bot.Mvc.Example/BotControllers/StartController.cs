@@ -11,11 +11,8 @@ namespace Telegram.Bot.Mvc.Example.BotControllers
 {
     public class StartController : BotController
     {
-        private readonly ILogger _logger;
-        
-        public StartController(ILogger<StartController> logger)
+        public StartController()
         {
-            _logger = logger;
         }
 
         [BotPath("/start", UpdateType.Message)]
@@ -37,35 +34,38 @@ namespace Telegram.Bot.Mvc.Example.BotControllers
         {
             Logger.LogInformation(User.Username + " TestScheduler!");
             var actions = new List<Func<Task>>();
-            var actions2 = new List<Func<Task>>();
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10; i++)
             {
                 int localIndex = i;
                 var chatId = Chat.Id;
-                var botId = Update.Id;
+                var botId = Context.BotSession.Username;
                 actions.Add(async () =>
                 {
-                    //await Bot.SendTextMessageAsync(chatId, "Welcome " + localIndex + "!");
-                    
-                    _logger.LogInformation($"Welcome {chatId} {localIndex} от {botId}");
+                    await Bot.SendTextMessageAsync(chatId, $"Welcome {Chat.Username} {localIndex} от {botId}");
                 });
             }
-            
-            for (int i = 0; i < 3; i++)
+
+            await Scheduler.AddTasks(Bot.BotId!.Value, 0, actions.ToArray());
+        }
+
+        [BotPath("/test2", UpdateType.Message)]
+        public async Task Test2Scheduler()
+        {
+            Logger.LogInformation(User.Username + " Test2Scheduler!");
+            var actions2 = new List<Func<Task>>();
+            for (int i = 0; i < 5; i++)
             {
                 int localIndex = i;
                 var chatId = Chat.Id;
-                var botId = Update.Id;
+                var botId = Context.BotSession.Username;
                 actions2.Add(async () =>
                 {
-                    //await Bot.SendTextMessageAsync(chatId, "Welcome " + localIndex + "!");
-                    
-                    _logger.LogInformation($"Супер важное сообщение {localIndex} для {chatId} от {botId}");
+                    await Bot.SendTextMessageAsync(chatId,
+                        $"Супер важное сообщение {localIndex} для {Chat.Username} от {botId}");
                 });
             }
-            await Scheduler.EnqueueSequential(delay: 1000, priority: 0, CancellationToken.None, actions.ToArray());
-            await Task.Delay(5000);
-            await Scheduler.EnqueueSequential(delay: 1000, priority: 1, CancellationToken.None, actions2.ToArray());
+
+            await Scheduler.AddTasks(Bot.BotId!.Value, 1, actions2.ToArray());
         }
     }
 }

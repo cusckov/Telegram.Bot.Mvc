@@ -12,10 +12,11 @@ namespace Telegram.Bot.Mvc.Framework
     public abstract class BotController : IDisposable
     {
         public BotContext Context { get; set; }
-        public IScheduler Scheduler { get; set; }
 
         private ChatSession _chatSession;
         private bool _disposed;
+
+        public IScheduler<long> Scheduler => Context.BotSession.Scheduler;
 
         public ChatSession ChatSession
         {

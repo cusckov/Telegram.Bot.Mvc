@@ -9,15 +9,13 @@ namespace Telegram.Bot.Mvc.Framework
 {
     public class BotControllerFactory : IBotControllerFactory
     {
-        private readonly IScheduler _scheduler;
+
         private readonly IServiceProvider _serviceProvider;
         private readonly IBotControllerProvider _controllerProvider;
 
-        public BotControllerFactory(IScheduler scheduler, 
-            IServiceProvider serviceProvider,
+        public BotControllerFactory(IServiceProvider serviceProvider,
             IBotControllerProvider controllerProvider)
         {
-            _scheduler = scheduler;
             _serviceProvider = serviceProvider;
             _controllerProvider = controllerProvider;
         }
@@ -29,7 +27,6 @@ namespace Telegram.Bot.Mvc.Framework
                 throw new Exception("Could Not Resolve Controller From Type!");
 
             controller.Context = context;
-            controller.Scheduler = _scheduler;
             return controller;
         }
 
@@ -38,12 +35,10 @@ namespace Telegram.Bot.Mvc.Framework
             if (type == null) 
                 throw new Exception("Controller Type Not Found!");
 
-            var controller = _serviceProvider.GetService(type) as BotController;
-            if (controller == null) 
+            if (_serviceProvider.GetService(type) is not BotController controller) 
                 throw new Exception("Could Not Create Controller From Type!");
 
             controller.Context = context;
-            controller.Scheduler = _scheduler;
             return controller;
         }
 

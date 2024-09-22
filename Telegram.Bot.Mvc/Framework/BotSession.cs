@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Mvc.Core.Interfaces;
+using Telegram.Bot.Mvc.Scheduler.Interfaces;
 using Telegram.Bot.Types;
 
 namespace Telegram.Bot.Mvc.Framework
 {
     public class BotSession
     {
+        public IScheduler<long> Scheduler;
         public string Username => BotInfo.Username;
         public User BotInfo { get; protected set; }
 
@@ -23,8 +25,9 @@ namespace Telegram.Bot.Mvc.Framework
 
         public IDictionary<long, ChatSession> ChatSessions { get; protected set; } = new Dictionary<long, ChatSession>();
 
-        public BotSession(ITelegramBotClient client, IBotRouter router, ILogger logger, string token)
+        public BotSession(ITelegramBotClient client, IBotRouter router, ILogger logger, string token, IScheduler<long> scheduler)
         {
+            Scheduler = scheduler;
             Bot = client;
             Logger = logger;
             Router = router;
