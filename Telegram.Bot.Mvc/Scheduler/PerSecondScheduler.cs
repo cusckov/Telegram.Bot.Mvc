@@ -9,7 +9,7 @@ using Telegram.Bot.Mvc.Scheduler.Interfaces;
 
 namespace Telegram.Bot.Mvc.Scheduler
 {
-    public class PerSecondScheduler : IScheduler
+    public class PerSecondScheduler: ISchedulerOld
     {
         private ILogger _logger;
         private int _tasksCount;

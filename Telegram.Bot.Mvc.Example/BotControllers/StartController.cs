@@ -11,9 +11,11 @@ namespace Telegram.Bot.Mvc.Example.BotControllers
 {
     public class StartController : BotController
     {
-        public StartController()
+        private readonly ILogger _logger;
+        
+        public StartController(ILogger<StartController> logger)
         {
-
+            _logger = logger;
         }
 
         [BotPath("/start", UpdateType.Message)]
@@ -34,17 +36,19 @@ namespace Telegram.Bot.Mvc.Example.BotControllers
         public Task TestScheduler()
         {
             Logger.LogInformation(User.Username + " TestScheduler!");
-            var actions = new List<Action>();
-            for (int i = 0; i < 5; i++)
+            var actions = new List<Func<Task>>();
+            for (int i = 0; i < 100; i++)
             {
                 int localIndex = i;
                 var chatId = Chat.Id;
                 actions.Add(async () =>
                 {
-                    await Bot.SendTextMessageAsync(chatId, "Welcome " + localIndex + "!");
+                    //await Bot.SendTextMessageAsync(chatId, "Welcome " + localIndex + "!");
+                    
+                    _logger.LogInformation("Welcome " + localIndex + "!");
                 });
             }
-            Scheduler.Enqueue(delay: 1000, priority: 0, actions: actions.ToArray());
+            Scheduler.EnqueueSequential(delay: 1000, priority: 0, CancellationToken.None, actions.ToArray());
             return Task.FromResult(0);
         }
     }

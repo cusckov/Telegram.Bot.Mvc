@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Mvc.Framework;
 using Telegram.Bot.Mvc.Services;
@@ -9,10 +10,14 @@ namespace Telegram.Bot.Mvc.Example.Controllers
     [Route("api/[controller]")]
     public class WebhooksController : Controller
     {
-        private readonly Dictionary<string, BotSession> _sessions;
+        private readonly ILogger<WebhooksController> _logger;
+        private readonly ConcurrentDictionary<string, BotSession?> _sessions;
 
-        public WebhooksController(BotSessionService sessionService)
+        public WebhooksController(
+            BotSessionService sessionService, 
+            ILogger<WebhooksController> logger)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _sessions = sessionService.GetBotSessions();
         }
 
@@ -24,21 +29,20 @@ namespace Telegram.Bot.Mvc.Example.Controllers
 
             try
             {
-                if (update == null)
-                    throw new ArgumentException("update is null!");
+                ArgumentNullException.ThrowIfNull(update);
 
-                _sessions.TryGetValue(botUsername, out BotSession session);
+                _sessions.TryGetValue(botUsername, out var session);
 
                 if (session == null)
-                    throw new ArgumentException("session is null, bot token is not registered!");
+                    throw new ArgumentNullException(nameof(session));
 
-                BotContext context = new BotContext(null, session, update);
+                var context = new BotContext(null, session, update);
 
                 await session.Router.Route(context);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogWarning(ex, "Error while POST query in WebhookController:");
             }
 
             return Ok(); 

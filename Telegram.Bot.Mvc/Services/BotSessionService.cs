@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Collections.Concurrent;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ namespace Telegram.Bot.Mvc.Services
         private readonly BotRouter _router;
         private readonly ILogger<BotSessionService> _logger;
         private readonly ITokenStorage _tokenStorage;
-        private Dictionary<string, BotSession> _sessions;
+        private ConcurrentDictionary<string, BotSession> _sessions;
         private readonly string _certificateFilePath;
         private readonly string _publicBaseUrl;
         private readonly bool _registerCertificate;
@@ -33,9 +34,9 @@ namespace Telegram.Bot.Mvc.Services
             _registerCertificate = options.Value.RegisterCertificate;
 
         }
-        public Dictionary<string, BotSession> GetBotSessions()
+        public ConcurrentDictionary<string, BotSession> GetBotSessions()
         {
-            _sessions = new Dictionary<string, BotSession>();
+            _sessions = new ConcurrentDictionary<string, BotSession>();
 
             var tokens = _tokenStorage.GetTokens();
 
@@ -52,7 +53,7 @@ namespace Telegram.Bot.Mvc.Services
                         .Wait();
                 }
 
-                _sessions.Add(session.Username, session);
+                _sessions.AddOrUpdate(session.Username, session, (_, _) => session);
             }
 
             return _sessions;
