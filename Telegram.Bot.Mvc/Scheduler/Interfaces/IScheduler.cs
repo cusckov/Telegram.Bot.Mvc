@@ -30,47 +30,5 @@ namespace Telegram.Bot.Mvc.Scheduler.Interfaces
         /// <returns>A task representing the enqueuing process.</returns>
         Task EnqueueSequential(int delay = 1000, uint priority = 0, CancellationToken cancellationToken = default,
             params Func<Task>[] actions);
-
-        /// <summary>
-        /// Enqueue a task with a timeout, after which it will be cancelled if not completed.
-        /// </summary>
-        /// <param name="action">An asynchronous action to be executed.</param>
-        /// <param name="timeout">Maximum time allowed for the task to complete.</param>
-        /// <param name="priority">Zero-based value specifying the priority of the task, zero is the highest.</param>
-        /// <returns>A task representing the enqueuing process.</returns>
-        Task EnqueueWithTimeout(Func<Task> action, TimeSpan timeout, uint priority = 0);
-
-        /// <summary>
-        /// Pause the current execution of enqueued tasks gracefully.
-        /// </summary>
-        void Pause();
-
-        /// <summary>
-        /// Resume the current execution of enqueued tasks from where it is paused.
-        /// </summary>
-        void Resume();
-
-        /// <summary>
-        /// Remove all unstarted tasks that are of a certain priority.
-        /// </summary>
-        /// <param name="priority">Zero-based value specifying the priority of the tasks to be removed, zero is the highest.</param>
-        void Clear(uint priority);
-
-        /// <summary>
-        /// Remove all unstarted tasks for a specific user.
-        /// </summary>
-        /// <param name="userId">The identifier of the user whose tasks should be removed.</param>
-        void ClearByUserId(long userId);
-
-        /// <summary>
-        /// Remove all unstarted tasks.
-        /// </summary>
-        void Clear();
-
-        /// <summary>
-        /// Get the count of tasks currently pending execution.
-        /// </summary>
-        /// <returns>The number of pending tasks.</returns>
-        int GetPendingTaskCount();
     }
 }
